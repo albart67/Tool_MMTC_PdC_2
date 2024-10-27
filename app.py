@@ -162,7 +162,7 @@ def main():
         pdc_statique = pertes_charge_statique[modèle]
         Total_pdc_statique = pdc_coudes + pdc_T_VI_BT + pdc_statique + pdc_autre
         st.write(f"Perte de charge statique déduite : {pdc_statique} mCE")
-        st.image(".\Tableau_ PdC2.png",  use_column_width=True)
+        st.image("./Tableau_ PdC2.png",  use_column_width=True)
         
     else:
         Total_pdc_statique = pdc_coudes + pdc_T_VI_BT + pdc_autre
