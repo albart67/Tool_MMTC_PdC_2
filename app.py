@@ -27,11 +27,11 @@ tubes_data = {
     "Cuivre": {
         "rugosites": 0.01,
         "D": {
-            "1\" 1/4 (DN 32)": 40,
-            "1\" 1/2 (DN 40)": 52,
-            "2\" (DN 50)": 60,
-            "2\" 1/2 (DN 65)": 72,
-            "3\" (DN 80)": 85
+            "1\" 1/4 (DN 32)": 33,
+            "1\" 1/2 (DN 40)": 40,
+            "2\" (DN 50)": 50,
+            "2\" 1/2 (DN 65)":65,
+            "3\" (DN 80)": 80
         }
     }
 }
@@ -43,11 +43,24 @@ tubes_data = {
 # Données de perte de charge statique pour chaque modèle MMTC
 pertes_charge_statique = {
     'MMTC 20': 1.63,
-    'MMTC 26':  2.04,
+    'MMTC 26': 2.04,
     'MMTC 33': 2.08,
     'MMTC 40': 1.17,
     'MHTC 20': 1.45,
     'MHTC 30': 2.55,
+    '2 x MMTC 20': 1.63,
+    '2 x MMTC 26': 2.04,
+    '2 x MMTC 33': 2.08,
+    '2 x MMTC 40': 1.17,
+    '2 x MHTC 20': 1.45,
+    '2 x MHTC 30': 2.55,
+    '3 x MMTC 20': 1.63,
+    '3 x MMTC 26': 2.04,
+    '3 x MMTC 33': 2.08,
+    '3 x MMTC 40': 1.17,
+    '3 x MHTC 20': 1.45,
+    '3 x MHTC 30': 2.55,
+
 
 }
 
@@ -66,12 +79,20 @@ def calculer_vitesse(Q, D):
     return v
 
 # Données pour les modèles de pompe
+# data = {
+#     'modèle': ['MMTC 20', 'MMTC 26', 'MMTC 33', 'MMTC 40', 'MHTC 20', 'MHTC 30', '2 x MMTC 20', '2 x MMTC 26', '2 x MMTC 33', '2 x MMTC 40',
+#                '3 x MMTC 20', '3 x MMTC 26', '3 x MMTC 33', '3 x MMTC 40'],
+#     'débit': [3.68, 4.72, 5.79, 6.98, 3.5, 5.24, 7.36, 9.44, 11.58, 13.96, 11.04, 14.16, 17.37, 20.94],
+#     'HMT dispo': [6.3, 3.2, 5.5, 2.8, 6.4, 4.4, 6.3, 3.2, 5.5, 2.8, 6.3, 3.2, 5.5, 2.8]
+# }
+
 data = {
     'modèle': ['MMTC 20', 'MMTC 26', 'MMTC 33', 'MMTC 40', 'MHTC 20', 'MHTC 30', '2 x MMTC 20', '2 x MMTC 26', '2 x MMTC 33', '2 x MMTC 40',
-               '3 x MMTC 20', '3 x MMTC 26', '3 x MMTC 33', '3 x MMTC 40'],
-    'débit': [3.68, 4.72, 5.79, 6.98, 3.5, 5.24, 7.36, 9.44, 11.58, 13.96, 11.04, 14.16, 17.37, 20.94],
-    'HMT dispo': [6.3, 3.2, 5.5, 2.8, 6.4, 4.4, 6.3, 3.2, 5.5, 2.8, 6.3, 3.2, 5.5, 2.8]
+               '3 x MMTC 20', '3 x MMTC 26', '3 x MMTC 33', '3 x MMTC 40', '2 x MHTC 20', '2 x MHTC 30', '3 x MHTC 20', '3 x MHTC 30'],
+    'débit': [3.68, 4.72, 5.79, 6.98, 3.5, 5.24, 7.36, 9.44, 11.58, 13.96, 11.04, 14.16, 17.37, 20.94, 7.0, 10.48, 10.5, 15.72],
+    'HMT dispo': [6.3, 3.2, 5.5, 2.8, 6.4, 4.4, 6.3, 3.2, 5.5, 2.8, 6.3, 3.2, 5.5, 2.8, 6.4, 4.4, 6.4, 4.4]
 }
+
 
 def main():
     st.title("Longueur maximale des conduites pour PAC MMTC et MHTC")
@@ -162,7 +183,7 @@ def main():
         pdc_statique = pertes_charge_statique[modèle]
         Total_pdc_statique = pdc_coudes + pdc_T_VI_BT + pdc_statique + pdc_autre
         st.write(f"Perte de charge statique déduite : {pdc_statique} mCE")
-        st.image("./Tableau_ PdC2.png",  use_column_width=True)
+        st.image(".\Tableau_ PdC2.png",  use_column_width=True)
         
     else:
         Total_pdc_statique = pdc_coudes + pdc_T_VI_BT + pdc_autre
