@@ -65,15 +65,6 @@ pertes_charge_statique = {
 }
 
 
-# # Fonction pour calculer la viscosité cinématique de l'eau en fonction de la température
-# def viscosite_cinematique_eau(temperature):
-#     # Approximation pour l'eau en fonction de la température (valeurs en m²/s)
-#     if temperature < 10:
-#         temperature = 10
-#     if temperature > 80:
-#         temperature = 80
-#     return 1.787e-6 * (10 / temperature)**1.5  # Formule simplifiée pour l'eau
-
 
 # Fonction Colebrook-White
 def colebrook(f, epsilon, D, Re):
@@ -125,6 +116,8 @@ viscosity_data = {
     80: 0.37e-6,
 }
 
+st.title("Longueur maximale des conduites pour PAC MMTC et MHTC")
+
 # Titre de l'application
 st.title("Viscosité cinématique de l'eau")
 
@@ -147,8 +140,7 @@ st.write(f"À **{temperature} °C**, la viscosité cinématique de l'eau est **{
 
 
 def main():
-    st.title("Longueur maximale des conduites pour PAC MMTC et MHTC")
-    
+        
     # Sélection du modèle de PAC
     st.markdown('<p style="font-size:20px; margin-bottom: 0px; margin-top: 20px;"><strong>Choisissez un modèle de PAC:</strong></p>', unsafe_allow_html=True)
     modèle = st.selectbox("", data['modèle'])
