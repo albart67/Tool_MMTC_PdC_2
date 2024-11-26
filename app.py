@@ -164,9 +164,6 @@ def main():
 
     nu = viscosity
 
-    # Affichage de la viscosité cinématique calculée
-    st.write(f"Viscosité cinématique calculée pour {temperature}°C : {nu:.8f} m²/s")
-
     # Récupérer le diamètre intérieur et la rugosité
     Diam = tubes_data[materiau]["D"][diamètre]   # Convertir en mètres
     D = Diam/1000
