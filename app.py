@@ -65,14 +65,14 @@ pertes_charge_statique = {
 }
 
 
-# Fonction pour calculer la viscosité cinématique de l'eau en fonction de la température
-def viscosite_cinematique_eau(temperature):
-    # Approximation pour l'eau en fonction de la température (valeurs en m²/s)
-    if temperature < 10:
-        temperature = 10
-    if temperature > 80:
-        temperature = 80
-    return 1.787e-6 * (10 / temperature)**1.5  # Formule simplifiée pour l'eau
+# # Fonction pour calculer la viscosité cinématique de l'eau en fonction de la température
+# def viscosite_cinematique_eau(temperature):
+#     # Approximation pour l'eau en fonction de la température (valeurs en m²/s)
+#     if temperature < 10:
+#         temperature = 10
+#     if temperature > 80:
+#         temperature = 80
+#     return 1.787e-6 * (10 / temperature)**1.5  # Formule simplifiée pour l'eau
 
 
 # Fonction Colebrook-White
@@ -104,6 +104,46 @@ data = {
     'HMT dispo': [6.3, 3.2, 5.5, 2.8, 6.4, 4.4, 6.3, 3.2, 5.5, 2.8, 6.3, 3.2, 5.5, 2.8, 6.4, 4.4, 6.4, 4.4]
 }
 
+import streamlit as st
+
+# Dictionnaire des températures et viscosités cinématiques correspondantes (en m²/s)
+viscosity_data = {
+    10: 1.31e-6,
+    15: 1.14e-6,
+    20: 1.00e-6,
+    25: 0.89e-6,
+    30: 0.80e-6,
+    35: 0.72e-6,
+    40: 0.65e-6,
+    45: 0.59e-6,
+    50: 0.54e-6,
+    55: 0.50e-6,
+    60: 0.47e-6,
+    65: 0.44e-6,
+    70: 0.41e-6,
+    75: 0.39e-6,
+    80: 0.37e-6,
+}
+
+# Titre de l'application
+st.title("Viscosité cinématique de l'eau")
+
+# Barre de sélection horizontale pour choisir une température
+temperature = st.slider(
+    "Choisissez une température (°C) :",
+    min_value=min(viscosity_data.keys()),
+    max_value=max(viscosity_data.keys()),
+    step=5,
+    value=20  # Valeur par défaut
+)
+
+# Récupération de la viscosité correspondant à la température choisie
+viscosity = viscosity_data[temperature]
+
+# Affichage des résultats
+st.write(f"À **{temperature} °C**, la viscosité cinématique de l'eau est **{viscosity:.2e} m²/s**.")
+
+
 
 
 def main():
@@ -121,10 +161,8 @@ def main():
     st.markdown('<p style="font-size:20px; margin-bottom: 0px;margin-top: 20px;"><strong>Choisissez la taille du tube:</strong></p>', unsafe_allow_html=True)
     diamètre = st.selectbox("", list(tubes_data[materiau]["D"].keys()))
 
-    # Sélection de la température
-    st.markdown('<p style="font-size:20px; margin-bottom: 0px;margin-top: 20px;"><strong>Sélectionnez la température de l\'eau (°C):</strong></p>', unsafe_allow_html=True)
-    temperature = st.slider("", min_value=10, max_value=80, value=20, step=1)
-    nu = viscosite_cinematique_eau(temperature)
+
+    nu = viscosity
 
     # Affichage de la viscosité cinématique calculée
     st.write(f"Viscosité cinématique calculée pour {temperature}°C : {nu:.8f} m²/s")
@@ -199,7 +237,7 @@ def main():
         pdc_statique = pertes_charge_statique[modèle]
         Total_pdc_statique = pdc_coudes + pdc_T_VI_BT + pdc_statique + pdc_autre
         st.write(f"Perte de charge statique déduite : {pdc_statique} mCE")
-        st.image("Tableau_ PdC2.png",  use_column_width=True)
+        st.image("Tableau_PdC2.png",  use_column_width=True)
         
     else:
         Total_pdc_statique = pdc_coudes + pdc_T_VI_BT + pdc_autre
