@@ -9,9 +9,11 @@ tubes_data = {
         "D": {
             "1\" 1/4 (DN 32)": 35.9,
             "1\" 1/2 (DN 40)": 41.8,
-            "2\" (DN 50)": 53,
-            "2\" 1/2 (DN 65)": 68.8,
-            "3\" (DN 80)": 80.8
+            "2\" (DN 50)": 53.1,
+            "2\" 1/2 (DN 65)": 68.1,
+            "3\" (DN 80)": 80.8,
+            "3\" 1/2 (DN90)": 93.6,
+            "4\" (DN100)": 105.3,
         }
     },
     "Multicouches": {
@@ -60,10 +62,36 @@ pertes_charge_statique = {
     '3 x MMTC 40': 1.17,
     '3 x MHTC 20': 1.45,
     '3 x MHTC 30': 2.55,
-
+    '4 x MMTC 20': 1.63,
+    '4 x MMTC 26': 2.04,
+    '4 x MMTC 33': 2.08,
+    '4 x MMTC 40': 1.17,
+    '4 x MHTC 20': 1.45,
+    '4 x MHTC 30': 2.55,
+    '5 x MMTC 20': 1.63,
+    '5 x MMTC 26': 2.04,
+    '5 x MMTC 33': 2.08,
+    '5 x MMTC 40': 1.17,
+    '5 x MHTC 20': 1.45,
+    '5 x MHTC 30': 2.55,
+    '6 x MMTC 20': 1.63,
+    '6 x MMTC 26': 2.04,
+    '6 x MMTC 33': 2.08,
+    '6 x MMTC 40': 1.17,
+    '6 x MHTC 20': 1.45,
+    '6 x MHTC 30': 2.55,
 
 }
 
+
+# # Fonction pour calculer la viscosité cinématique de l'eau en fonction de la température
+# def viscosite_cinematique_eau(temperature):
+#     # Approximation pour l'eau en fonction de la température (valeurs en m²/s)
+#     if temperature < 10:
+#         temperature = 10
+#     if temperature > 80:
+#         temperature = 80
+#     return 1.787e-6 * (10 / temperature)**1.5  # Formule simplifiée pour l'eau
 
 
 # Fonction Colebrook-White
@@ -88,12 +116,58 @@ def calculer_vitesse(Q, D):
 #     'HMT dispo': [6.3, 3.2, 5.5, 2.8, 6.4, 4.4, 6.3, 3.2, 5.5, 2.8, 6.3, 3.2, 5.5, 2.8]
 # }
 
+# data = {
+#     'modèle': ['MMTC 20', 'MMTC 26', 'MMTC 33', 'MMTC 40', 'MHTC 20', 'MHTC 30', '2 x MMTC 20', '2 x MMTC 26', '2 x MMTC 33', '2 x MMTC 40',
+#                '3 x MMTC 20', '3 x MMTC 26', '3 x MMTC 33', '3 x MMTC 40', '2 x MHTC 20', '2 x MHTC 30', '3 x MHTC 20', '3 x MHTC 30',
+#                '4 x MMTC 20', '4 x MMTC 26', '4 x MMTC 33', '4 x MMTC 40', '4 x MHTC 20', '4 x MHTC 30', '4 x MHTC 20', '4 x MHTC 30',
+#                 '5 x MMTC 20', '5 x MMTC 26', '5 x MMTC 33', '5 x MMTC 40', '5 x MHTC 20', '5 x MHTC 30', '5 x MHTC 20', '5 x MHTC 30',
+#                 '6 x MMTC 20', '6 x MMTC 26', '6 x MMTC 33', '6 x MMTC 40', '6 x MHTC 20', '6 x MHTC 30', '6 x MHTC 20', '6 x MHTC 30'],
+#     'débit': [3.68, 4.72, 5.79, 6.98, 3.5, 5.24, 7.36, 9.44, 11.58, 13.96, 11.04, 14.16, 17.37, 20.94, 7.0, 10.48, 10.5, 15.72],
+#     'HMT dispo': [6.3, 3.2, 5.5, 2.8, 6.4, 4.4, 6.3, 3.2, 5.5, 2.8, 6.3, 3.2, 5.5, 2.8, 6.4, 4.4, 6.4, 4.4]
+# }
+
 data = {
-    'modèle': ['MMTC 20', 'MMTC 26', 'MMTC 33', 'MMTC 40', 'MHTC 20', 'MHTC 30', '2 x MMTC 20', '2 x MMTC 26', '2 x MMTC 33', '2 x MMTC 40',
-               '3 x MMTC 20', '3 x MMTC 26', '3 x MMTC 33', '3 x MMTC 40', '2 x MHTC 20', '2 x MHTC 30', '3 x MHTC 20', '3 x MHTC 30'],
-    'débit': [3.68, 4.72, 5.79, 6.98, 3.5, 5.24, 7.36, 9.44, 11.58, 13.96, 11.04, 14.16, 17.37, 20.94, 7.0, 10.48, 10.5, 15.72],
-    'HMT dispo': [6.3, 3.2, 5.5, 2.8, 6.4, 4.4, 6.3, 3.2, 5.5, 2.8, 6.3, 3.2, 5.5, 2.8, 6.4, 4.4, 6.4, 4.4]
+    'modèle': [
+        'MMTC 20', 'MMTC 26', 'MMTC 33', 'MMTC 40', 
+        'MHTC 20', 'MHTC 30', 
+        '2 x MMTC 20', '2 x MMTC 26', '2 x MMTC 33', '2 x MMTC 40', 
+        '3 x MMTC 20', '3 x MMTC 26', '3 x MMTC 33', '3 x MMTC 40', 
+        '2 x MHTC 20', '2 x MHTC 30', '3 x MHTC 20', '3 x MHTC 30', 
+        '4 x MMTC 20', '4 x MMTC 26', '4 x MMTC 33', '4 x MMTC 40', 
+        '4 x MHTC 20', '4 x MHTC 30', 
+        '5 x MMTC 20', '5 x MMTC 26', '5 x MMTC 33', '5 x MMTC 40', 
+        '5 x MHTC 20', '5 x MHTC 30', 
+        '6 x MMTC 20', '6 x MMTC 26', '6 x MMTC 33', '6 x MMTC 40', 
+        '6 x MHTC 20', '6 x MHTC 30'
+    ],
+    'débit': [
+        3.68, 4.72, 5.79, 6.98, 
+        3.5, 5.24, 
+        2 * 3.68, 2 * 4.72, 2 * 5.79, 2 * 6.98, 
+        3 * 3.68, 3 * 4.72, 3 * 5.79, 3 * 6.98, 
+        2 * 3.5, 2 * 5.24, 3 * 3.5, 3 * 5.24, 
+        4 * 3.68, 4 * 4.72, 4 * 5.79, 4 * 6.98, 
+        4 * 3.5, 4 * 5.24, 
+        5 * 3.68, 5 * 4.72, 5 * 5.79, 5 * 6.98, 
+        5 * 3.5, 5 * 5.24, 
+        6 * 3.68, 6 * 4.72, 6 * 5.79, 6 * 6.98, 
+        6 * 3.5, 6 * 5.24
+    ],
+    'HMT dispo': [
+        6.3, 3.2, 5.5, 2.8, 
+        6.4, 4.4, 
+        6.3, 3.2, 5.5, 2.8, 
+        6.3, 3.2, 5.5, 2.8, 
+        6.4, 4.4, 6.4, 4.4, 
+        6.3, 3.2, 5.5, 2.8, 
+        6.4, 4.4, 
+        6.3, 3.2, 5.5, 2.8, 
+        6.4, 4.4, 
+        6.3, 3.2, 5.5, 2.8, 
+        6.4, 4.4
+    ]
 }
+
 
 import streamlit as st
 
@@ -116,10 +190,11 @@ viscosity_data = {
     80: 0.37e-6,
 }
 
+#Titre de l'app
 st.title("Longueur maximale des conduites pour PAC MMTC et MHTC")
 
 # Titre de l'application
-st.title("Viscosité cinématique de l'eau")
+st.subheader("Viscosité cinématique de l'eau")
 
 # Barre de sélection horizontale pour choisir une température
 temperature = st.slider(
@@ -140,7 +215,8 @@ st.write(f"À **{temperature} °C**, la viscosité cinématique de l'eau est **{
 
 
 def main():
-        
+    
+    
     # Sélection du modèle de PAC
     st.markdown('<p style="font-size:20px; margin-bottom: 0px; margin-top: 20px;"><strong>Choisissez un modèle de PAC:</strong></p>', unsafe_allow_html=True)
     modèle = st.selectbox("", data['modèle'])
@@ -155,6 +231,7 @@ def main():
 
 
     nu = viscosity
+
 
     # Récupérer le diamètre intérieur et la rugosité
     Diam = tubes_data[materiau]["D"][diamètre]   # Convertir en mètres
