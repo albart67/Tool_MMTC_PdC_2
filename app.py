@@ -1,6 +1,9 @@
 import streamlit as st
 import math
 from scipy.optimize import fsolve
+import numpy as np
+import pandas as pd
+import plotly.express as px
 
 # Données du tableau avec rugosité ajoutée
 tubes_data = {
@@ -81,6 +84,15 @@ pertes_charge_statique = {
     '6 x MHTC 20': 1.45,
     '6 x MHTC 30': 2.55,
 
+}
+
+
+
+# --- Données des ballons ---
+ballons = {
+    "B650-B800": {"debit": 4.6, "pdc": 1.6},
+    "B1000": {"debit": 5.1, "pdc": 2.0},
+    "B1500-B3000": {"debit": 5.1, "pdc": 2.0}
 }
 
 
@@ -335,5 +347,101 @@ def main():
 
 
 
+    
+    st.write("")
+    st.write("")
+    st.divider()
+    st.write("")
+
+
+
+    # --- Interface utilisateur ---
+    st.title("Calcul des pertes de charge des ballons B aux débit des PAC")
+    st.markdown("Saisissez le débit et choisissez le ballon pour afficher les pertes de charge et le graphique correspondant.")
+
+    debit_ballon = st.slider(
+    "Choisissez un débit pour le ballon ECS :",
+    min_value = 0.0,
+    max_value= 10.0,
+    step=0.1,
+    value=5.0  # Valeur par défaut
+)
+
+
+    # 2️⃣ Sélection du ballon
+    ballon_choisi = st.selectbox(
+        "Choisissez le type de ballon :", options=list(ballons.keys())
+    )
+
+    # --- Récupération des données du ballon choisi ---
+    debit_reference = ballons[ballon_choisi]["debit"]
+    pdc_reference = ballons[ballon_choisi]["pdc"]
+
+    # --- Calcul des pertes de charge (formule de perte de charge proportionnelle au carré du débit) ---
+    def calcul_pdc(debit, debit_ref, pdc_ref):
+        """Calcule la perte de charge pour un débit donné en utilisant la loi quadratique."""
+        return pdc_ref * (debit / debit_ref) ** 2
+
+    pdc_utilisateur = calcul_pdc(debit_ballon, debit_reference, pdc_reference)
+
+    # 3️⃣ Affichage des résultats
+    st.subheader("Résultats")
+    st.markdown(f"**Ballon choisi** : {ballon_choisi}")
+    st.markdown(f"**Débit saisi** : {debit_ballon:.2f} m³/h")
+    st.markdown(f"**Pertes de charge** : {pdc_utilisateur:.2f} mCE")
+
+    # 4️⃣ Tracé du graphique
+    debits = np.linspace(0, 10, 100)  # Plage de débits de 0 à 10 m³/h
+    pdc_values = [calcul_pdc(d, debit_reference, pdc_reference) for d in debits]  # Calcul des pertes de charge
+
+    # Crée un DataFrame pour le traçage du graphique
+    df = pd.DataFrame({
+        "Débit (m³/h)": debits,
+        "Pertes de charge (mCE)": pdc_values
+    })
+
+    # Tracé avec le point de fonctionnement
+    fig = px.line(df, x="Débit (m³/h)", y="Pertes de charge (mCE)", title="Courbe des pertes de charge")
+    fig.add_scatter(
+        x=[debit_ballon], 
+        y=[pdc_utilisateur], 
+        mode='markers+text', 
+        marker=dict(size=10, color='red'), 
+        name='Point de fonctionnement',
+        text=["Point de fonctionnement"],
+        textposition="bottom right"
+    )
+
+    # Tracé des lignes pointillées
+    fig.add_scatter(
+        x=[debit_ballon, debit_ballon], 
+        y=[0, pdc_utilisateur], 
+        mode='lines', 
+        line=dict(dash='dot', color='red'), 
+        name='Ligne pointillée'
+    )
+    fig.add_scatter(
+        x=[0, debit_ballon], 
+        y=[pdc_utilisateur, pdc_utilisateur], 
+        mode='lines', 
+        line=dict(dash='dot', color='red'), 
+        name='Ligne pointillée'
+    )
+
+    # Affichage du graphique
+    st.plotly_chart(fig)
+
+
+
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
     main()
+
+
