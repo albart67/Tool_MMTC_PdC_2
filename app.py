@@ -184,44 +184,28 @@ data = {
 import streamlit as st
 
 # Dictionnaire des températures et viscosités cinématiques correspondantes (en m²/s)
-viscosity_data = {
-    10: 1.31e-6,
-    15: 1.14e-6,
-    20: 1.00e-6,
-    25: 0.89e-6,
-    30: 0.80e-6,
-    35: 0.72e-6,
-    40: 0.65e-6,
-    45: 0.59e-6,
-    50: 0.54e-6,
-    55: 0.50e-6,
-    60: 0.47e-6,
-    65: 0.44e-6,
-    70: 0.41e-6,
-    75: 0.39e-6,
-    80: 0.37e-6,
-}
+viscosity_data = 1.31e-6
 
 #Titre de l'app
 st.title("Longueur maximale des conduites pour PAC MMTC et MHTC")
 
 # Titre de l'application
-st.subheader("Viscosité cinématique de l'eau")
+# st.subheader("Viscosité cinématique de l'eau")
 
 # Barre de sélection horizontale pour choisir une température
-temperature = st.slider(
-    "Choisissez une température (°C) :",
-    min_value=min(viscosity_data.keys()),
-    max_value=max(viscosity_data.keys()),
-    step=5,
-    value=20  # Valeur par défaut
-)
+# temperature = st.slider(
+#     "Choisissez une température (°C) :",
+#     min_value=min(viscosity_data.keys()),
+#     max_value=max(viscosity_data.keys()),
+#     step=5,
+#     value=20  # Valeur par défaut
+# )
 
 # Récupération de la viscosité correspondant à la température choisie
-viscosity = viscosity_data[temperature]
+viscosity = viscosity_data
 
 # Affichage des résultats
-st.write(f"À **{temperature} °C**, la viscosité cinématique de l'eau est **{viscosity:.2e} m²/s**.")
+st.write(f"Nous utilisons la viscosité cinématique de l'eau à 10°: **{viscosity_data} m²/s**.")
 
 
 
@@ -277,20 +261,28 @@ def main():
     # Nombre de coudes à 90° grand angle
 
     st.markdown('<p style="font-size:20px; margin-bottom: 0px;margin-top: 20px;"><strong>Nombre de coudes à 90° grand angle:</strong></p>', unsafe_allow_html=True)
-    coudes = st.selectbox("", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    coudes = st.selectbox("", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 , 17, 18, 19, 20])
 
     # PdC singulières (T, VI, entrée-sortie BT)
-    st.markdown('<p style="font-size:20px; margin-bottom: 0px;margin-top: 20px;"><strong>Somme des dzeta si connues</strong></p>', unsafe_allow_html=True)
-    dzeta_T_VI_BT = st.number_input("", min_value=0.0, step=0.1)
+    # st.markdown('<p style="font-size:20px; margin-bottom: 0px;margin-top: 20px;"><strong>Somme des dzeta si connues</strong></p>', unsafe_allow_html=True)
+    # dzeta_T_VI_BT = st.number_input("", min_value=0.0, step=0.1)
 
     # PdC filtre + clapet
-    st.markdown('<p style="font-size:20px; margin-bottom: 0px;margin-top: 20px;"><strong>PdC de la vanne d équilibrage et autre accidents (mCE)</strong></p>', unsafe_allow_html=True)
-    pdc_autre = st.number_input(".", min_value=0.0, step=0.1)
+    st.markdown('<p style="font-size:20px; margin-bottom: 0px;margin-top: 20px;"><strong>Pertes de charges supplémentaires (vanne équilibrages, serpentin ballon, accidents,...(mCE)</strong></p>', unsafe_allow_html=True)
+
+    pdc_autre1 = st.number_input(".", min_value=0.0, step=0.1, key='pdc_autre1')
+    pdc_autre2 = st.number_input(".", min_value=0.0, step=0.1, key='pdc_autre2')
+    pdc_autre3 = st.number_input(".", min_value=0.0, step=0.1, key='pdc_autre3')
+
+
+    pdc_autre = pdc_autre1 + pdc_autre2 + pdc_autre3
+
 
     # Choix de déduire la perte de charge statique
 
-    st.markdown('<p style="font-size:17px; margin-bottom: 0px;margin-top: 20px;"><strong>Déduire la perte de charge totale théorique pour: VI, Filtre, Clapet AR, T et Brides Tampon en fonction du modèle MMTC:</strong></p>', unsafe_allow_html=True)
-    deduire_pdc_statique = st.checkbox("")
+    st.markdown('<p style="font-size:20px; margin-bottom: 0px;margin-top: 20px;"><strong>Déduction de la perte de charge totale théorique pour: VI, Filtre, Clapet AR, T et Brides Tampon en fonction du modèle MMTC:</strong></p>', unsafe_allow_html=True)
+    deduire_pdc_statique = st.checkbox("Déduire", value=True)
+
 
    
 
@@ -308,17 +300,18 @@ def main():
     pdc_coudes = y * coudes * 0.45
 
     # PdC pour 2Té + 2 VI + 2 Brides
-    pdc_T_VI_BT = dzeta_T_VI_BT * y
+    # pdc_T_VI_BT = dzeta_T_VI_BT * y
 
      # Si déduction de la perte de charge statique
     if deduire_pdc_statique and modèle in pertes_charge_statique:
         pdc_statique = pertes_charge_statique[modèle]
-        Total_pdc_statique = pdc_coudes + pdc_T_VI_BT + pdc_statique + pdc_autre
+        Total_pdc_statique = pdc_coudes + pdc_statique + pdc_autre1 + pdc_autre2 + pdc_autre3
         st.write(f"Perte de charge statique déduite : {pdc_statique} mCE")
-        st.image("Tableau_PdC2.png",  use_column_width=True)
+        # st.image('Tableau_PdC2.png', caption='Tableau PdC2')
+        st.image("Tableau_PdC2.png",  use_container_width=True)
         
     else:
-        Total_pdc_statique = pdc_coudes + pdc_T_VI_BT + pdc_autre
+        Total_pdc_statique = pdc_coudes + pdc_autre
 
 
 
@@ -359,12 +352,22 @@ def main():
     st.title("Calcul des pertes de charge des ballons B aux débit des PAC")
     st.markdown("Saisissez le débit et choisissez le ballon pour afficher les pertes de charge et le graphique correspondant.")
 
+   
+    # st.image("Tableau_debit.png",  use_container_width=True)
+
+  
+
+    st.image('Tableau3.jpg', use_container_width=True)
+
+
+    # st.image("Tableau_debit.png",  use_column_width=True)
+
     debit_ballon = st.slider(
     "Choisissez un débit pour le ballon ECS :",
     min_value = 0.0,
     max_value= 10.0,
     step=0.1,
-    value=5.0  # Valeur par défaut
+    value=5.  # Valeur par défaut
 )
 
 
